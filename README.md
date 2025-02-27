@@ -87,6 +87,4 @@ Le projet suit une architecture MVC (Modèle-Vue-Contrôleur) pour séparer les 
 
 
 
-### Remerciements
 
-Remerciez les personnes ou les organisations qui ont contribué à ce projet (facultatif).
