@@ -1,16 +1,50 @@
 const adminModule = require("../Modules/admin.Module");
+const nodemailer = require('nodemailer');
+const {randomBytes} = require("crypto");
+const generateCode = randomBytes(6).toString("hex");
+const transporter = nodemailer.createTransport({
+    host: 'sandbox.smtp.mailtrap.io',
+    port: 2525,
+    secure: false, // use SSL
+    auth: {
+      user: '42c2640dbbb26a',
+      pass: 'd667870a7333e5',
+    }
+  });
 
 module.exports = {
     CreateAdmin: async (req, res) => {
         try {
-            const admin = new adminModule(req.body);
-            await admin.save();
+            const admin=await adminModule({...req.body,code:generateCode})
+            const savedadmin= await admin.save()
 
             res.status(200).json({
                 success: true,
                 message: "Admin is created",
-                data: admin
+                data:savedadmin
             });
+            const mailOptions = {
+                from: 'yourusername@email.com',
+                to: savedprovider.email,
+                subject: 'hello' + '' +savedprovider.fullname,
+                text: 'mail de confirmation',
+                html:`<!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Document</title>
+            </head>
+            <body>
+                <h1>verify account</h1>
+                <a href ="http://localhost:3000/user/verify/${savedadmin.code}"> click here </a>
+            </body>
+            </html>`
+              };
+              transporter.sendMail(mailOptions
+                
+              );
 
         } catch (error) {
             console.error("Error creating admin:", error);
