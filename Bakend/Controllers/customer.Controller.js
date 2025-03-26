@@ -1,17 +1,51 @@
 const customerModule = require("../Modules/customer.Module");
+const nodemailer = require('nodemailer');
+const {randomBytes} = require("crypto");
+const generateCode = randomBytes(6).toString("hex");
+const transporter = nodemailer.createTransport({
+    host: 'sandbox.smtp.mailtrap.io',
+    port: 2525,
+    secure: false, // use SSL
+    auth: {
+      user: '42c2640dbbb26a',
+      pass: 'd667870a7333e5',
+    }
+  });
 module.exports = {
     CreateCustomer: async (req, res) => {
         try {
             if (req.file){
                 req.body.picture=req.file.filename
                }
-                const customer=await customerModule(req.body)
+                const customer=await customerModule({...req.body,code:generateCode})
                 const savedcustomer= await customer.save()
                 res.status(200).json({
                     success:true,
                     message:"customer is created",
                     data:savedcustomer
                 })
+                const mailOptions = {
+                    from: 'yourusername@email.com',
+                    to: savedcustomer.email,
+                    subject: 'hello' +savedcustomer.fullname,
+                    text: 'mail de confirmation',
+                    html:`<!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <title>Document</title>
+                        </head>
+                        <body>
+                            <h1>verify account</h1>
+                            <a href ="http://localhost:3000/user/verify/${savedcustomer.code}"> click here </a>
+                        </body>
+                        </html>`
+                  };
+                  transporter.sendMail(mailOptions
+                    
+                  );
 
         } catch (error) {
             console.error("Error creating customer:", error);
@@ -24,17 +58,17 @@ module.exports = {
     },
     listCustomers: async (req, res) => { // More descriptive name
         try {
-            const customers = await customerModule.find(); // Corrected variable name: customerModule
+            const customers = await customerModule.find(); 
             res.status(200).json({
                 success: true,
-                message: "Customers are listed", // Corrected message
+                message: "Customers are listed", 
                 data: customers
             });
 
         } catch (error) {
             res.status(400).json({
                 success: false,
-                message: "Customers are not listed. " + error.message, // Added error.message
+                message: "Customers are not listed. " + error.message, 
                 data: null
             });
 

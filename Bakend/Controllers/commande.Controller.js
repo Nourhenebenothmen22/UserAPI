@@ -1,15 +1,19 @@
 const commandeModule=require("../Modules/commande.Module")
+const customerModule=require("../Modules/customer.Module")
 module.exports={
      Create: async (req, res) => {
             try {
-                const commande = new commandeModule(req.body); // Correct: use 'new'
-                await commande.save(); // Correct: save 'facture'
-    
+                const commande=await CommandeModule(req.body)
+                await commande.save()
+                await customerModule.findByIdAndUpdate({_id:req.body.customer},{$push:{
+                 commandes:commande._id
+                
+                        }})
                 res.status(200).json({
-                    success: true,
-                    message: "Commande is created", // Corrected spelling
+                    success:true,
+                    message:"commande is created",
                     data:commande
-                });
+                })
     
             } catch (error) {
                 console.error("Error creating commande:", error); // Log the error

@@ -13,8 +13,6 @@ const customerSchema=new mongoose.Schema({
     City:{
         type:String
     }
-    
-
 })
 userModule.discriminator("customer",customerSchema)
 module.exports=mongoose.model("customer")

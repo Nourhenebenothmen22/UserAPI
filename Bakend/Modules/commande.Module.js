@@ -24,6 +24,5 @@ const commandeSchema=new mongoose.Schema({
         required: true, // Le prix de livraison est obligatoire
         min: 0 // Le prix de livraison ne peut pas être négatif
       }
-
 })
 module.exports=mongoose.model("commande",commandeSchema)

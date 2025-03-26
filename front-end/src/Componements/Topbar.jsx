@@ -1,6 +1,10 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 function Topbar() {
+  const cartCount=useSelector((state)=>state.auth.cart.items.length)
+
   return (
     <div>
        {/* Topbar Start */}
@@ -58,10 +62,10 @@ function Topbar() {
         <i className="fas fa-heart text-primary" />
         <span className="badge">0</span>
       </a>
-      <a href className="btn border">
+      <Link to='/Cart' className="btn border">
         <i className="fas fa-shopping-cart text-primary" />
-        <span className="badge">0</span>
-      </a>
+        <span className="badge">{cartCount}</span>
+      </Link>
     </div>
   </div>
 </div>

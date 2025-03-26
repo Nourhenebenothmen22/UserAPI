@@ -1,6 +1,37 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+import { logout } from '../pages/Redux/Slice/AuthSlice'
+import Categorie from '../services/Categorie'
 
 function Navbar() {
+  const dispatch=useDispatch()
+  const isLogin=useSelector((state)=>state.auth.auth.isAuthenticated)
+  const handelLogout=()=>{
+    dispatch(logout());
+    localStorage.removeItem('auth')
+  }
+   const [category,setCategory]=useState([])
+    const getCategorie=async()=>{
+      try {
+        const res=await Categorie.getCategorie()
+       if(res){
+        setCategory(res.data.data)
+        console.log("les donne de notre categorie sont ",res.data.data)
+       }
+       else{
+        console.log("not categorie found")
+       }
+       
+  
+      } catch (error) {
+        console.log("impossible de chargé les categorie ",error)
+      }
+  
+    }
+    useEffect(()=>{
+     getCategorie()
+    },[])
   return (
     <div>
         <div className="container-fluid mb-5">
@@ -10,6 +41,7 @@ function Navbar() {
           <h6 className="m-0">Categories</h6>
           <i className="fa fa-angle-down text-dark" />
         </a>
+        
         <nav className="collapse show navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0" id="navbar-vertical">
           <div className="navbar-nav w-100 overflow-hidden" style={{height: 410}}>
             <div className="nav-item dropdown">
@@ -42,21 +74,28 @@ function Navbar() {
           </button>
           <div className="collapse navbar-collapse justify-content-between" id="navbarCollapse">
             <div className="navbar-nav mr-auto py-0">
-              <a href="index.html" className="nav-item nav-link active">Home</a>
-              <a href="shop.html" className="nav-item nav-link">Shop</a>
-              <a href="detail.html" className="nav-item nav-link">Shop Detail</a>
+              <Link to="/" className="nav-item nav-link active">Home</Link>
+              <Link to="/Shop" className="nav-item nav-link">Shop</Link>
+              <Link to="/Detail" className="nav-item nav-link">Shop Detail</Link>
               <div className="nav-item dropdown">
                 <a href="#" className="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
                 <div className="dropdown-menu rounded-0 m-0">
-                  <a href="cart.html" className="dropdown-item">Shopping Cart</a>
-                  <a href="checkout.html" className="dropdown-item">Checkout</a>
+                  <Link to="/Cart" className="dropdown-item">Shopping Cart</Link>
+                  <Link to="/Chekout" className="dropdown-item">Checkout</Link>
                 </div>
               </div>
-              <a href="contact.html" className="nav-item nav-link">Contact</a>
+              <Link to="/Contact" className="nav-item nav-link">Contact</Link>
             </div>
+
             <div className="navbar-nav ml-auto py-0">
-              <a href className="nav-item nav-link">Login</a>
-              <a href className="nav-item nav-link">Register</a>
+              {
+                isLogin ? (<a onClick={handelLogout} className="nav-item nav-link">Logout</a>):(<>
+                <Link to="/Login" className="nav-item nav-link">Login</Link>
+                <Link to ="/Registre"className="nav-item nav-link">Register</Link>
+
+                </>)
+              }
+              
             </div>
           </div>
         </nav>
